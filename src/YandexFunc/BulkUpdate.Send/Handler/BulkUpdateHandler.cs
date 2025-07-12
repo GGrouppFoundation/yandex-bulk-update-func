@@ -8,17 +8,15 @@ namespace GGroupp.Yandex.BulkUpdate;
 
 internal sealed partial class BulkUpdateHandler(IHttpApi httpApi) : IBulkUpdateHandler
 {
-    private const int BaseSuccessStatusCode = 200;
-
     private const string OrganizationId = "bpfc8bo9bqkku0jkif8q";
 
     private static readonly Uri YandexTrackerApiSearchIssuesPostUri
         =
         new("https://api.tracker.yandex.net/v3/issues/_search");
 
-    private static readonly Uri YandexTrackerApiIssuesPostUri
+    private static readonly string YandexTrackerApiIssuesPostUri
         =
-        new("https://api.tracker.yandex.net/v3/issues/");
+        "https://api.tracker.yandex.net/v3/issues/";
 
     private static readonly PipelineParallelOption ParallelOption
         =
@@ -56,16 +54,6 @@ internal sealed partial class BulkUpdateHandler(IHttpApi httpApi) : IBulkUpdateH
         }
 
         return body.Content.ToString();
-    }
-
-    private static FlatArray<Issue> DeserializeBodyAsArray(HttpBody body)
-    {
-        if (body.Type.IsJsonMediaType(false))
-        {
-            return body.DeserializeFromJson<FlatArray<Issue>>();
-        }
-
-        return new();
     }
 
     private static FlatArray<KeyValuePair<string, string>> BuildHeader(string organizationId)

@@ -1,5 +1,4 @@
 using System;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using GarageGroup;
@@ -35,16 +34,15 @@ partial class BulkUpdateHandler
         .PipeValue(
             httpApi.SendAsync)
         .MapFailure(
-            static failure => Failure.Create(HandlerFailureCode.Persistent, failure.Body.ToString()))
+            static failure => failure.ToStandardFailure("Failed to query issues:").WithFailureCode(HandlerFailureCode.Persistent))
         .MapSuccess(
-            @in => DeserializeBodyAsArray(@in.Body))
+            static success => success.Body.DeserializeFromJson<FlatArray<Issue>>())
         .ForwardParallelValue(
             (issue, token) => UpdateIssueAsync(issue, input, token),
             ParallelOption)
         .MapSuccess(
             static success => new BulkUpdateOut
             {
-                IsSuccess = true,
                 Successes = success.Filter(item => item.IsSuccess is true).Length
             });
 
@@ -54,7 +52,7 @@ partial class BulkUpdateHandler
         AsyncPipeline.Pipe(
             issue, cancellationToken)
         .Pipe(
-            @in => new HttpSendIn(
+            issue => new HttpSendIn(
                 method: HttpVerb.Patch,
                 requestUri: YandexTrackerApiIssuesPostUri.ToString() + issue.Id.OrEmpty())
             {
@@ -69,17 +67,6 @@ partial class BulkUpdateHandler
                 IssueId = issue.Id.OrEmpty(),
                 IsSuccess = true
             })
-        .Recover(
-            failure => failure.StatusCode switch
-            {
-                HttpFailureCode.BadRequest => new UpdateResult
-                {
-                    IssueId = issue.Id.OrEmpty(),
-                    IsSuccess = false,
-                    Body = DeserializeBody(failure.Body)
-                },
-                _ => failure
-            })
         .MapFailure(
-            static failure => Failure.Create(HandlerFailureCode.Transient, "Internal service error"));
+            static failure => failure.ToStandardFailure("Failed to update issue:").WithFailureCode(HandlerFailureCode.Persistent));
 }
