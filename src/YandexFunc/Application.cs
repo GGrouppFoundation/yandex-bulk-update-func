@@ -6,12 +6,12 @@ namespace GGroupp.Yandex.BulkUpdate;
 
 public static class Application
 {
-    [YandexHttpFuncton("BulkUpdateFunc")]
+    [YandexHttpFuncton("BulkUpdateFunction")]
     public static Dependency<IBulkUpdateHandler> UseBulkUpdateHandler()
         =>
         PrimaryHandler.UseStandardSocketsHttpHandler()
         .UseLogging("BulkUpdateApi")
-        .UseYandexIamToken("YANDEX_OAUTH_TOKEN")
+        .UseYandexIamToken("Yandex")
         .UsePollyStandard()
         .UseHttpApi()
         .UseBulkUpdateHandler();
