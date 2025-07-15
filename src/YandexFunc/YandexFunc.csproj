@@ -7,8 +7,8 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <InvariantGlobalization>true</InvariantGlobalization>
     <NoWarn>$(NoWarn);IDE0130;CA1859</NoWarn>
-    <RootNamespace>GGroupp.Yandex.BulkUpdate</RootNamespace>
-    <AssemblyName>GGroupp.Yandex.BulkUpdate.YandexFunc</AssemblyName>
+    <RootNamespace>GGroupp.Yandex.IssuesUpdate</RootNamespace>
+    <AssemblyName>GGroupp.Yandex.IssuesUpdate.YandexFunc</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
