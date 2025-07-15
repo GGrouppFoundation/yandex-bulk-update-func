@@ -5,9 +5,8 @@ using GarageGroup.Infra;
 
 namespace GGroupp.Yandex.IssuesUpdate;
 
-internal sealed partial class IssuesUpdateHandler(IHttpApi httpApi) : IIssuesUpdateHandler
+internal sealed partial class IssuesUpdateHandler(IHttpApi httpApi, IssuesUpdateOption option) : IIssuesUpdateHandler
 {
-
     private const string YandexTrackerApiSearchIssuesPostUri
         =
         "https://api.tracker.yandex.net/v3/issues/_search";
@@ -26,7 +25,7 @@ internal sealed partial class IssuesUpdateHandler(IHttpApi httpApi) : IIssuesUpd
 
     private readonly FlatArray<KeyValuePair<string, string>> Headers
         =
-        [new("X-Cloud-Org-ID", IssuesUpdateOption.OrganizationId)];
+        [new("X-Cloud-Org-ID", option.OrganizationId)];
 
     private static Result<IssuesUpdateIn, Failure<HandlerFailureCode>> Validate(IssuesUpdateIn? input)
     {
@@ -52,12 +51,7 @@ internal sealed partial class IssuesUpdateHandler(IHttpApi httpApi) : IIssuesUpd
         =>
         failureCode switch
         {
-            HttpFailureCode.BadRequest => HandlerFailureCode.Persistent,
-            HttpFailureCode.Unauthorized => HandlerFailureCode.Persistent,
-            HttpFailureCode.Forbidden => HandlerFailureCode.Persistent,
-            HttpFailureCode.NotFound => HandlerFailureCode.Persistent,
-            HttpFailureCode.Conflict => HandlerFailureCode.Transient,
-            HttpFailureCode.Locked => HandlerFailureCode.Persistent,
+            HttpFailureCode.Conflict or HttpFailureCode.InternalServerError => HandlerFailureCode.Transient,
             _ => HandlerFailureCode.Persistent
         };
 }

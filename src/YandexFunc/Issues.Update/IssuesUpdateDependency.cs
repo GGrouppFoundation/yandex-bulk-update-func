@@ -6,15 +6,16 @@ namespace GGroupp.Yandex.IssuesUpdate;
 
 public static class IssuesUpdateDependency
 {
-    public static Dependency<IIssuesUpdateHandler> UseIssuesUpdateHandler(this Dependency<IHttpApi> dependency)
+    public static Dependency<IIssuesUpdateHandler> UseIssuesUpdateHandler(this Dependency<IHttpApi, IssuesUpdateOption> dependency)
     {
         ArgumentNullException.ThrowIfNull(dependency);
-        return dependency.Map<IIssuesUpdateHandler>(CreateHandler);
+        return dependency.Fold<IIssuesUpdateHandler>(CreateHandler);
 
-        static IssuesUpdateHandler CreateHandler(IHttpApi httpApi)
+        static IssuesUpdateHandler CreateHandler(IHttpApi httpApi, IssuesUpdateOption option)
         {
             ArgumentNullException.ThrowIfNull(httpApi);
-            return new(httpApi);
+            ArgumentNullException.ThrowIfNull(option);
+            return new(httpApi, option);
         }
     }
 }
