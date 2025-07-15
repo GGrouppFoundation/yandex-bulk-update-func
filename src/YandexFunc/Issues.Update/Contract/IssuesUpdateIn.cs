@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
-namespace GGroupp.Yandex.BulkUpdate;
+namespace GGroupp.Yandex.IssuesUpdate;
 
-public sealed record class BulkUpdateIn
+public sealed record class IssuesUpdateIn
 {
     public string? Query { get; init; }
 

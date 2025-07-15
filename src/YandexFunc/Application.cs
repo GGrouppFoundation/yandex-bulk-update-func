@@ -2,17 +2,17 @@ using GarageGroup.Infra;
 using GGroupp.Infra;
 using PrimeFuncPack;
 
-namespace GGroupp.Yandex.BulkUpdate;
+namespace GGroupp.Yandex.IssuesUpdate;
 
 public static class Application
 {
-    [YandexHttpFuncton("BulkUpdateFunction")]
-    public static Dependency<IBulkUpdateHandler> UseBulkUpdateHandler()
+    [YandexHttpFuncton("IssuesUpdateFunction")]
+    public static Dependency<IIssuesUpdateHandler> UseIssuesUpdateHandler()
         =>
         PrimaryHandler.UseStandardSocketsHttpHandler()
-        .UseLogging("BulkUpdateApi")
+        .UseLogging("IssuesUpdateApi")
         .UseYandexIamToken("Yandex")
         .UsePollyStandard()
         .UseHttpApi()
-        .UseBulkUpdateHandler();
+        .UseIssuesUpdateHandler();
 }
